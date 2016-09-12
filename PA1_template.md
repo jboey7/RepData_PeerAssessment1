@@ -1,5 +1,6 @@
 **Downloading and unzipping the dataset**
-```{r}
+
+```r
 library(dplyr)
 library(magrittr)
 url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -8,28 +9,35 @@ unzip("activity.zip")
 ```
 
 **Reading the data from the dataset**
-```{r}
+
+```r
 activity = read.csv("activity.csv", header=T, colClasses = c("integer", "character", "integer") ,sep = ",")
 ```
 
 **Converting character format to date format**
-```{r}
+
+```r
 activity$date <- as.Date(activity$date)
 ```
 
 1. Get the total steps per day
-```{r}
+
+```r
 totalsteps <- aggregate(steps ~ date, activity, FUN = sum, na.rm = TRUE)
 colnames(totalsteps) <- c("Days","Steps")
 ```
 
 2. Create Histogram
-```{r}
+
+```r
 hist(totalsteps$Steps, main = paste("Total Steps Each Day"), col="red", xlab="Number of Steps")
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+
 3. Calculate mean and median
-```{r}
+
+```r
 mean_totalsteps <- mean(totalsteps$Steps)
 median_totalsteps <- median(totalsteps$Steps)
 ```
@@ -39,18 +47,23 @@ The mean and median can be found in *mean_totalsteps* and *median_totalsteps* re
 =============================================
 
 Step 1: Calculate the average steps for each interval for all days
-```{r}
+
+```r
 average_steps <- aggregate(steps ~ interval, activity, FUN = mean, na.rm = TRUE)
 colnames(average_steps) <- c("Interval", "Steps")
 ```
 
 Step 2: Plot the Average Number teps per day by Interval.
-```{r}
+
+```r
 plot(average_steps$Interval, average_steps$Steps, type="l", xlab="Interval", ylab="Number of Steps",main="Average Number of Steps per Day by Interval")
 ```
 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+
 Step 3: Find interval with most average steps.
-```{r}
+
+```r
 max_numb_steps_interval <- average_steps[which.max(average_steps$Steps),1]
 ```
 
@@ -59,12 +72,18 @@ The average_steps contains the average steps for each interval for all days.
 ======================================
 
 A. Calculate the total number of missing values.
-```{r}
+
+```r
 sum(is.na(activity$steps))
 ```
 
+```
+## [1] 2304
+```
+
 B. Before creating a new dataset with missing data filled in, the missing values have to be imputed using mean for each day.
-```{r}
+
+```r
 activity2 <- subset(activity, !is.na(activity$steps))
 affected <- is.na(activity$steps)
 tAvg <- tapply(activity2$steps, activity2$interval, mean, na.rm = TRUE, simplify = T)
@@ -72,7 +91,8 @@ activity$steps[affected] <- tAvg[as.character(activity$interval[affected])]
 ```
 
 C. Create a histogram of total  number of steps taken each day. Compare imputed histogram and NA histogram.
-```{r}
+
+```r
 totalsteps2 <- aggregate(steps ~ date, activity, FUN = sum)
 par(mar = c(3,4,4,1)) 
 hist(totalsteps2$steps, breaks = 10, col = "blue", xlab = "Daily Steps", main = "Total Steps Each Day")
@@ -80,13 +100,40 @@ hist(totalsteps$Steps, breaks = 10, col = "red", xlab = "Daily Steps", main = "T
 legend("topright", c("Imputed", "NA"), fill = c("blue","red"), cex = 0.55)
 ```
 
-D. Calculate the mean and median of the total number of steps taken per day.
-```{r}
-mean(totalsteps$Steps)
-mean(totalsteps2$steps)
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
 
+D. Calculate the mean and median of the total number of steps taken per day.
+
+```r
+mean(totalsteps$Steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+mean(totalsteps2$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(totalsteps$Steps)
+```
+
+```
+## [1] 10765
+```
+
+```r
 median(totalsteps2$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 Based on the final findings, the means remain unchanged, however the median are different.
@@ -94,7 +141,8 @@ Based on the final findings, the means remain unchanged, however the median are 
 =====================================================
 
 (1) Create new factor variable in dataset with 2 levels - "weekday" and "weekend" to indicating if is a weekend or not.
-```{r}
+
+```r
 library(lubridate)
 is_weekday <-function(date){
         if(wday(date)%in%c(1,7)) result<-"weekend"
@@ -108,12 +156,21 @@ activity_without_NAs <- mutate(activity,date=ymd(date)) %>% mutate(day=sapply(da
 table(activity_without_NAs$day)
 ```
 
+```
+## 
+## weekday weekend 
+##   12960    4608
+```
+
 (2) Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
-```{r}
+
+```r
 library(ggplot2)
 pattern <- activity_without_NAs %>% mutate(day=factor(day,levels=c("weekend","weekday")),steps_no_NAs=as.numeric(steps)) %>% group_by(interval,day) %>% summarise(average=mean(steps))
 qplot(interval,average,data=pattern,geom="line",facets=day~.)
 ```
+
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
 
 Based on the finding, on weekday basis, the test suject is more active at the start of the day, however, the activeness is higher throughout the weekends. 
 
