@@ -1,3 +1,4 @@
+## Loading and preprocessing the data
 **Downloading and unzipping the dataset**
 
 ```r
@@ -20,6 +21,8 @@ activity = read.csv("activity.csv", header=T, colClasses = c("integer", "charact
 activity$date <- as.Date(activity$date)
 ```
 
+==================================================================================================
+## What is mean total number of steps taken per day?
 1. Get the total steps per day
 
 ```r
@@ -45,7 +48,7 @@ median_totalsteps <- median(totalsteps$Steps)
 The mean and median can be found in *mean_totalsteps* and *median_totalsteps* respectively.
 
 =============================================
-
+## What is the average daily activity pattern?
 Step 1: Calculate the average steps for each interval for all days
 
 ```r
@@ -70,7 +73,7 @@ max_numb_steps_interval <- average_steps[which.max(average_steps$Steps),1]
 The average_steps contains the average steps for each interval for all days.
 
 ======================================
-
+## Imputing missing values
 A. Calculate the total number of missing values.
 
 ```r
@@ -139,7 +142,7 @@ median(totalsteps2$steps)
 Based on the final findings, the means remain unchanged, however the median are different.
 
 =====================================================
-
+## Are there differences in activity patterns between weekdays and weekends?
 (1) Create new factor variable in dataset with 2 levels - "weekday" and "weekend" to indicating if is a weekend or not.
 
 ```r

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title></title>
+<title>Loading and preprocessing the data</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -201,6 +201,8 @@ hr {
 </head>
 
 <body>
+<h2>Loading and preprocessing the data</h2>
+
 <p><strong>Downloading and unzipping the dataset</strong></p>
 
 <pre><code class="r">library(dplyr)
@@ -219,6 +221,10 @@ unzip(&quot;activity.zip&quot;)
 
 <pre><code class="r">activity$date &lt;- as.Date(activity$date)
 </code></pre>
+
+<h1></h1>
+
+<h2>What is mean total number of steps taken per day?</h2>
 
 <ol>
 <li>Get the total steps per day</li>
@@ -249,6 +255,8 @@ median_totalsteps &lt;- median(totalsteps$Steps)
 
 <h1></h1>
 
+<h2>What is the average daily activity pattern?</h2>
+
 <p>Step 1: Calculate the average steps for each interval for all days</p>
 
 <pre><code class="r">average_steps &lt;- aggregate(steps ~ interval, activity, FUN = mean, na.rm = TRUE)
@@ -270,6 +278,8 @@ colnames(average_steps) &lt;- c(&quot;Interval&quot;, &quot;Steps&quot;)
 <p>The average_steps contains the average steps for each interval for all days.</p>
 
 <h1></h1>
+
+<h2>Imputing missing values</h2>
 
 <p>A. Calculate the total number of missing values.</p>
 
@@ -327,6 +337,8 @@ legend(&quot;topright&quot;, c(&quot;Imputed&quot;, &quot;NA&quot;), fill = c(&q
 <p>Based on the final findings, the means remain unchanged, however the median are different.</p>
 
 <h1></h1>
+
+<h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
 <p>(1) Create new factor variable in dataset with 2 levels - &ldquo;weekday&rdquo; and &ldquo;weekend&rdquo; to indicating if is a weekend or not.</p>
 
